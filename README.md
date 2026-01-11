@@ -1,184 +1,113 @@
-This C++ code implements a comprehensive University Management System that handles student enrollment, course management, grade tracking, waitlists, and undo functionality using various data structures.
+# University Management System (C++)
+
+This C++ project implements a comprehensive **University Management System** designed to handle student enrollment, course management, grade tracking, waitlists, and undo functionality. It demonstrates the practical application of various fundamental data structures in a real-world scenario.
+
+## 🏗️ Data Structures Used
+
+The system leverages multiple data structures to manage relationships efficiently:
+
+*   **Student Structure (Linked List):**
+    *   Stores student info (ID, Name).
+    *   Maintains a linked list of `Enrollment` nodes.
+    *   Linked to other students via a singly linked list.
+*   **Enrollment Structure (Linked List per Student):**
+    *   Tracks course enrollments, grades, and course IDs.
+*   **Course Structure (Doubly Linked List):**
+    *   Stores details (ID, Name, Credits, Capacity).
+    *   Uses `next`/`prev` pointers for bidirectional traversal.
+    *   Contains a **Circular Linked List** for the waitlist.
+*   **WaitlistNode (Circular Linked List):**
+    *   Manages students waiting for full courses continuously.
+*   **Request Structure (Queue - FIFO):**
+    *   Handles enrollment requests in the order they are received.
+*   **UndoAction Structure (Stack - LIFO):**
+    *   Tracks actions (`ENROLL`, `DROP`, `GRADE`) to enable undo functionality.
+
+## 🚀 Key Features
+
+### 1. Student Management
+*   Add new students with unique IDs.
+*   Dynamic storage using linked lists.
+
+### 2. Course Management
+*   Create courses with specific capacity and credits.
+*   Bidirectional display (Forward and Backward) using doubly linked lists.
+
+### 3. Enrollment System
+*   **Request Queue:** Process enrollment requests sequentially.
+*   **Capacity Check:** Automatic validation of available seats.
+*   **Waitlist:** Auto-adds students to a circular waitlist when courses are full.
+*   **Duplicate Prevention:** Ensures unique enrollments.
+
+### 4. Grade Management
+*   Enter and update grades.
+*   Default grade `-1.0` indicates "no grade yet".
+
+### 5. Transcript & GPA
+*   **Recursive Display:** Prints transcripts in reverse order.
+*   **Weighted GPA:** Calculated recursively using the formula:
+    $$ \text{GPA} = \frac{\sum (\text{grade} \times \text{credits})}{\sum \text{credits}} $$
+
+### 6. Undo System
+*   Revert `ENROLL`, `DROP`, and `GRADE` actions.
+*   Maintains history to restore previous states accurately.
+
+### 7. Memory Management
+*   Full cleanup of dynamically allocated memory to prevent leaks.
+
+---
+
+## 🛠️ Main Functions
+
+### Core Operations
+*   `addStudent()`: Register a new student.
+*   `addCourse()`: Create a new course.
+*   `enqueueRequest()`: Queue an enrollment request.
+*   `processNextRequest()`: Execute the oldest request in the queue.
+
+### Enrollment Logic
+*   `enrollInternal()`: Handles logic for open seats vs. waitlists.
+*   `dropCourse()`: Removes a student and updates counts.
+*   `addToWaitlist()`: Manages the circular waitlist.
+
+### Grade & Reporting
+*   `enterGrade()`: Assigns grades.
+*   `printStudentDetails()`: Shows transcript and GPA.
+*   `calculateGPARecursive()`: Computes GPA efficiently.
+
+### Utilities
+*   `findStudent()` / `findCourse()`: Linear search helpers.
+*   `undoLastAction()`: Stack-based state reversion.
+*   `cleanUp()`: Frees all memory.
+
+---
+
+## 💻 User Interface
+
+The main menu provides an interactive console interface for:
+1.  Adding Students/Courses
+2.  Submitting & Processing Enrollment Requests
+3.  Dropping Courses
+4.  Managing Grades
+5.  Viewing Transcripts
+6.  Undoing Actions
+7.  Displaying Course Lists
+
+## 📝 Example Usage Flow
+
+1.  **Setup:** Admin adds courses (e.g., *CS101*, *CS102*).
+2.  **Registration:** Students (e.g., *Ali*, *Sara*) are added.
+3.  **Request:** Students submit enrollment requests which go into the **Queue**.
+4.  **Processing:** System processes requests. If *CS101* is full, the student is moved to the **Circular Waitlist**.
+5.  **Grading:** Instructors enter grades.
+6.  **Review:** Transcripts display courses and calculated GPA.
+7.  **Correction:** Accidental drops or wrong grades can be reverted using **Undo**.
 
-Data Structures Used
-1. Student Structure
-Stores student information (ID, name)
+## 🌟 Technical Highlights
 
-Contains a linked list of Enrollment nodes for courses the student is enrolled in
+*   **Complex Data Structures:** Integration of Linked Lists, Doubly Linked Lists, Circular Lists, Stacks, and Queues.
+*   **Recursion:** Used for elegant GPA calculation and transcript printing.
+*   **Memory Safety:** Robust allocation and deallocation practices.
+*   **Undo/Redo Pattern:** Implements a classic stack-based undo mechanism.
 
-Linked to other students in a singly linked list
-
-2. Enrollment Structure
-Tracks course enrollment for each student
-
-Contains course ID, grade, and pointer to next enrollment
-
-Forms a linked list per student
-
-3. Course Structure (Doubly Linked List)
-Stores course details (ID, name, credits, capacity)
-
-Tracks current enrollment count
-
-Contains a circular linked list waitlist for full courses
-
-Uses next/prev pointers for bidirectional traversal
-
-4. WaitlistNode Structure (Circular Linked List)
-Represents students waiting for a full course
-
-Circular linking allows continuous traversal
-
-5. Request Structure (Queue)
-Represents enrollment requests waiting to be processed
-
-FIFO (First-In-First-Out) structure
-
-6. UndoAction Structure (Stack)
-Tracks actions for undo functionality
-
-LIFO (Last-In-First-Out) structure
-
-Stores action type, student ID, course ID, and previous grade
-
-Key Features
-1. Student Management
-Add new students with unique IDs
-
-Store student information in a linked list
-
-2. Course Management
-Add courses with specified capacity and credits
-
-Courses stored in doubly linked list for bidirectional traversal
-
-Display courses in forward and backward order
-
-3. Enrollment System
-Request Queue: Enrollment requests are queued and processed in order
-
-Capacity Check: Automatically checks if course has available seats
-
-Waitlist Management: Full courses use circular linked list waitlists
-
-Duplicate Prevention: Prevents multiple enrollments in same course
-
-4. Grade Management
-Enter and update grades for enrolled students
-
-Grade value -1.0 represents "no grade yet"
-
-5. Transcript & GPA Calculation
-Recursive Display: Prints transcript in reverse order using recursion
-
-GPA Calculation: Computes weighted GPA using recursive traversal
-
-Formula: GPA = Σ(grade × credits) / Σ(credits)
-
-6. Undo System
-Tracks ENROLL, DROP, and GRADE actions
-
-Allows reverting to previous state
-
-Maintains grade history for accurate undo
-
-7. Memory Management
-Proper cleanup of all dynamically allocated memory
-
-Prevents memory leaks
-
-Main Functions Explained
-1. Core Operations
-addStudent(): Adds new student to the system
-
-addCourse(): Creates new course with specified parameters
-
-enqueueRequest(): Adds enrollment request to processing queue
-
-processNextRequest(): Processes the oldest request in queue
-
-2. Enrollment Functions
-enrollInternal(): Core enrollment logic with waitlist handling
-
-dropCourse(): Removes student from course, updates enrollment count
-
-addToWaitlist(): Adds student to circular waitlist for full course
-
-3. Grade & Transcript Functions
-enterGrade(): Updates student grade for specific course
-
-printStudentDetails(): Displays transcript and calculates GPA
-
-printTranscriptRecursive(): Recursive function to print enrollments
-
-calculateGPARecursive(): Recursive GPA calculation
-
-4. Utility Functions
-findStudent() / findCourse(): Search functions using linear search
-
-displayCoursesForward() / Backward(): Bidirectional course display
-
-undoLastAction(): Reverts the most recent action
-
-cleanUp(): Memory deallocation for all structures
-
-User Interface
-The main menu provides options for:
-
-Adding students and courses
-
-Submitting enrollment requests
-
-Processing requests
-
-Dropping courses
-
-Managing grades
-
-Viewing transcripts
-
-Undoing actions
-
-Displaying courses
-
-Example Usage Flow
-Admin adds courses (CS101, CS102)
-
-Students are added to the system (Ali, Sara)
-
-Students request enrollment via queue
-
-System processes requests in order
-
-If course is full, student goes to waitlist
-
-Grades are entered for enrolled students
-
-Transcripts show courses and calculated GPA
-
-Mistakes can be undone using stack-based undo system
-
-Technical Highlights
-Multiple Data Structures: Linked lists, queues, stacks, circular lists
-
-Recursive Algorithms: For GPA calculation and transcript display
-
-Bidirectional Navigation: Course list can be traversed both ways
-
-Circular Waitlist: Efficient waitlist management
-
-Undo/Redo Pattern: Action tracking for system reliability
-
-Memory Safety: Proper allocation and deallocation
-
-Code Structure
-Global pointers maintain the head/top of each data structure
-
-Modular functions for each operation
-
-Input validation and error handling
-
-Clean separation of concerns between different system components
-
-This system demonstrates practical application of data structures in managing complex real-world relationships between students, courses, and academic records.
 
